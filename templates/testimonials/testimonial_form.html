@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}{% if object %}Edit Review{% else %}Write Review{% endif %} - TestimonialsHub{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-4 mb-4">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow border-0 rounded-4 p-md-4">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-circle mb-3 shadow-sm" style="width: 64px; height: 64px;">
+                        <i class="fas fa-edit fa-2x"></i>
+                    </div>
+                    <h2 class="card-title fw-bolder">{% if object %}Edit Your Review{% else %}Write a Review{% endif %}</h2>
+                    <p class="text-muted">Share your genuine experience with our community.</p>
+                </div>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2 mt-4 pt-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'dashboard' %}" class="btn btn-light rounded-pill px-4 me-md-2 shadow-sm">Cancel</a>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">{% if object %}Save Changes{% else %}Submit Review{% endif %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

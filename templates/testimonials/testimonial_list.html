@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% block title %}All Testimonials - TestimonialsHub{% endblock %}
+{% block content %}
+<div class="row mb-5 mt-3 align-items-end">
+    <div class="col-md-6 mb-3 mb-md-0">
+        <h2 class="fw-bolder">What People Are Saying</h2>
+        <p class="text-secondary mb-0">Discover authentic stories and experiences from our community.</p>
+    </div>
+    <div class="col-md-6 text-md-end">
+        <a href="{% url 'testimonial_create' %}" class="btn btn-primary rounded-pill px-4 shadow-sm"><i class="fas fa-pen me-2"></i>Write a Review</a>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4 mb-4">
+    <div class="card-body p-4">
+        <form method="get" class="row g-3 items-center">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" name="q" class="form-control border-start-0 bg-light" placeholder="Search keywords..." value="{{ current_q }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="category" class="form-select bg-light">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if current_category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="rating" class="form-select bg-light">
+                    <option value="">Any Rating</option>
+                    <option value="5" {% if current_rating == "5" %}selected{% endif %}>5 Stars</option>
+                    <option value="4" {% if current_rating == "4" %}selected{% endif %}>4 Stars</option>
+                    <option value="3" {% if current_rating == "3" %}selected{% endif %}>3 Stars</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-secondary rounded-pill">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    {% for testimonial in testimonials %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 testimonial-card p-3 shadow-sm rounded-4 border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    {% if testimonial.photo %}
+                        <img src="{{ testimonial.photo.url }}" alt="{{ testimonial.name }}" class="testimonial-img me-3 shadow-sm">
+                    {% else %}
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                            {{ testimonial.name|make_list|first|upper }}
+                        </div>
+                    {% endif %}
+                    <div>
+                        <h5 class="card-title fw-bold mb-0">{{ testimonial.name }}</h5>
+                        <span class="badge bg-light text-primary">{{ testimonial.category.name }}</span>
+                    </div>
+                </div>
+                <div class="mb-2 star-rating fs-5">
+                    {% for i in "12345"|make_list %}
+                        {% if forloop.counter <= testimonial.rating %}
+                            <i class="fas fa-star text-warning"></i>
+                        {% else %}
+                            <i class="far fa-star text-warning"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <p class="card-text text-secondary font-italic mt-3 fs-5">"{{ testimonial.message }}"</p>
+            </div>
+            <div class="card-footer bg-transparent border-top-0 pt-0 d-flex justify-content-between align-items-center">
+                <small class="text-muted"><i class="far fa-calendar-alt me-1"></i>{{ testimonial.created_date|date:"F d, Y" }}</small>
+                {% if user.is_authenticated %}
+                <button class="btn btn-sm btn-outline-danger btn-like rounded-pill px-3" data-id="{{ testimonial.id }}">
+                    <i class="fas fa-heart"></i> <span class="like-count">{{ testimonial.num_likes }}</span>
+                </button>
+                {% else %}
+                <span class="text-danger small fw-bold"><i class="fas fa-heart me-1"></i>{{ testimonial.num_likes }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5 text-muted">
+        <div class="p-5 bg-white shadow border rounded-4">
+            <i class="fas fa-search fa-3x mb-3 text-light"></i>
+            <h4>No testimonials found.</h4>
+            <p>Try adjusting your search or filters.</p>
+            <a href="{% url 'testimonial_list' %}" class="btn btn-outline-primary mt-3 rounded-pill px-4">Clear Filters</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link rounded-pill border-0 me-2" href="?page={{ page_obj.previous_page_number }}{% if current_q %}&q={{ current_q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_rating %}&rating={{ current_rating }}{% endif %}">Previous</a></li>
+        {% endif %}
+        
+        <li class="page-item disabled"><span class="page-link rounded-pill border-0 me-2 bg-light text-dark fw-bold">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+        
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link rounded-pill border-0" href="?page={{ page_obj.next_page_number }}{% if current_q %}&q={{ current_q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_rating %}&rating={{ current_rating }}{% endif %}">Next</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('.btn-like').click(function() {
+            var btn = $(this);
+            var id = btn.data('id');
+            $.ajax({
+                type: 'POST',
+                url: '{% url "testimonial_like" %}',
+                data: {
+                    'testimonial_id': id,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    btn.find('.like-count').text(response.num_likes);
+                    if (response.liked) {
+                        btn.removeClass('btn-outline-danger').addClass('btn-danger text-white');
+                    } else {
+                        btn.removeClass('btn-danger text-white').addClass('btn-outline-danger');
+                    }
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

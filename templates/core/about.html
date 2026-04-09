@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}About Us - TestimonialsHub{% endblock %}
+{% block content %}
+<div class="row align-items-center mb-5 mt-4">
+    <div class="col-md-6 mb-4 mb-md-0 position-relative">
+        <div class="position-absolute rounded-4 bg-primary" style="width: 100%; height: 100%; top: 20px; left: -20px; z-index: -1; opacity: 0.1;"></div>
+        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Team" class="img-fluid rounded-4 shadow">
+    </div>
+    <div class="col-md-6 ps-lg-5">
+        <span class="text-uppercase fw-bold text-primary mb-2 d-block tracking-wide" style="letter-spacing: 2px;">Our Story</span>
+        <h1 class="mb-4 fw-bolder">About TestimonialsHub</h1>
+        <p class="lead text-secondary">We believe that real stories from real people have the power to create trust and connection across the digital landscape.</p>
+        <p class="text-secondary">TestimonialsHub was created to provide a clean, reliable, and user-friendly platform for gathering and displaying authentic feedback. Whether you are an individual wanting to share your experience or a professional looking to gather insights, our platform is beautifully designed for your needs.</p>
+        
+        <div class="mt-4">
+            <div class="d-flex mb-3">
+                <div class="text-primary me-3 pt-1"><i class="fas fa-check-circle fa-lg"></i></div>
+                <div><h6 class="fw-bold mb-1">Authentic Voices</h6><p class="text-secondary mb-0">Verified user accounts to ensure every feedback is genuine.</p></div>
+            </div>
+            <div class="d-flex mb-3">
+                <div class="text-primary me-3 pt-1"><i class="fas fa-camera fa-lg"></i></div>
+                <div><h6 class="fw-bold mb-1">Rich Media</h6><p class="text-secondary mb-0">Easy-to-use submission forms supporting photo uploads.</p></div>
+            </div>
+            <div class="d-flex">
+                <div class="text-primary me-3 pt-1"><i class="fas fa-shield-alt fa-lg"></i></div>
+                <div><h6 class="fw-bold mb-1">Safe & Secure</h6><p class="text-secondary mb-0">Comprehensive admin moderation for a safe environment.</p></div>
+            </div>
+        </div>
+        
+        <a href="{% url 'contact' %}" class="btn btn-primary rounded-pill px-4 mt-4 shadow-sm">Get in Touch</a>
+    </div>
+</div>
+{% endblock %}

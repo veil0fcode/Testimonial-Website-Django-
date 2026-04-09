@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row align-items-center mb-5 mt-4">
+    <div class="col-lg-6 pe-lg-5">
+        <h1 class="display-4 fw-bolder mb-4 text-dark">Share Your Experience with the World</h1>
+        <p class="lead mb-4 text-secondary">Discover what people are saying, or share your own thoughts. TestimonialsHub is the place to connect over shared experiences.</p>
+        <div>
+            <a href="{% url 'testimonial_list' %}" class="btn btn-outline-primary btn-lg rounded-pill px-4 me-2">Explore Reviews</a>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm">Join Now</a>
+            {% else %}
+                <a href="{% url 'testimonial_create' %}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm">Write a Review</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-6 d-none d-lg-block text-center position-relative">
+        <div class="position-absolute rounded-circle" style="background: linear-gradient(135deg, var(--navy) 0%, var(--terracotta) 100%); width: 400px; height: 400px; top: -50px; right: 0; z-index: -1; opacity: 0.1;"></div>
+        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="People communicating" class="img-fluid rounded-4 shadow" style="border: 10px solid white;">
+    </div>
+</div>
+
+<div class="text-center mb-5 mt-5">
+    <span class="text-uppercase fw-bold text-primary mb-2 d-block tracking-wide" style="letter-spacing: 2px;">Testimonials</span>
+    <h2 class="h2 fw-bold text-dark">Recent Highlights</h2>
+</div>
+
+<div class="row g-4">
+    {% for testimonial in recent_testimonials %}
+    <div class="col-md-4">
+        <div class="card h-100 testimonial-card p-4">
+            <div class="card-body">
+                <div class="mb-3 star-rating fs-5">
+                    {% for i in "12345"|make_list %}
+                        {% if forloop.counter <= testimonial.rating %}
+                            <i class="fas fa-star"></i>
+                        {% else %}
+                            <i class="far fa-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <p class="card-text text-secondary mb-4 fs-5 font-italic">"{{ testimonial.message|truncatewords:20 }}"</p>
+            </div>
+            <div class="card-footer bg-transparent border-top-0 pt-0">
+                <div class="d-flex align-items-center">
+                    {% if testimonial.photo %}
+                        <img src="{{ testimonial.photo.url }}" alt="{{ testimonial.name }}" class="testimonial-img me-3 shadow-sm">
+                    {% else %}
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                            {{ testimonial.name|make_list|first|upper }}
+                        </div>
+                    {% endif %}
+                    <div>
+                        <h6 class="card-title fw-bold mb-0 text-dark">{{ testimonial.name }}</h6>
+                        <small class="text-primary fw-medium">{{ testimonial.category.name }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center text-muted">
+        <div class="p-5 bg-white rounded-4 shadow-sm border">
+            <i class="fas fa-comment-slash fa-3x mb-3 text-light"></i>
+            <h4>No testimonials available yet.</h4>
+            <p>Be the first to share your experience!</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
